@@ -1,9 +1,11 @@
 from models import *
 import db
 import os
+
 if __name__ == "__main__":
     path = SQLITE3_NAME
     if not os.path.isfile(path):
+        #create table
         Base.metadata.create_all(db.engine)
 
     admin = User(username='admin', password='fastapi', mail='hege@example.com')
