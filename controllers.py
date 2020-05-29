@@ -46,3 +46,13 @@ def admin(request: Request, credentials: HTTPBasicCredentials = Depends(security
         {'request':request,
         'user':user,
         'task':task})
+
+def register(request: Request):
+    if request.method == 'GET':
+        return templates.TemplateResponse('register.html',
+            {'request': request,
+            'username': '',
+            'error':[]})
+
+    if request.method == 'POST':
+        pass
