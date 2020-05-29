@@ -1,10 +1,13 @@
 from fastapi import FastAPI, Depends, HTTPException
-from fastapi.security import HTTPBasic, HTTPAuthorizationCredentials
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
-from starlette.statues import HTTP_401_UNAUTHORIZED
+from starlette.status import HTTP_401_UNAUTHORIZED
+
 import db
 from models import User, Task
+import hashlib
 
 app = FastAPI(
     title='FastAPIで作るToDoアプリケーション',
@@ -14,6 +17,8 @@ app = FastAPI(
 
 templates = Jinja2Templates(directory="templates")
 jinja_env = templates.env
+
+security = HTTPBasic()
 
 def index(request: Request):
     return templates.TemplateResponse('index.html', {'request':request})
