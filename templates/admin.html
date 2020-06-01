@@ -35,5 +35,17 @@
   {% endfor %}
   </tbody>
 </table>
+<br><br>
+<h3> - カレンダー - </h3>
+<p>
+  <span class="text-warning">■</span>... 予定があります。&nbsp;
+  <span class=="text-secondary">■</span>... 過去の予定。&nbsp;
+  <span class=="text-sucsess">■</span> ... 終了した予定。</p>
+<br>
+<p>↓　日付をクリックして予定を追加・確認などができます。</p>
+{% autoescape false%}
+{{ calendar }}
+{% endautoescape %}
+<br>
 
 {% endblock %}
