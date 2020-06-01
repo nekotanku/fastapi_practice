@@ -5,6 +5,10 @@ from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 from starlette.status import HTTP_401_UNAUTHORIZED
 
+from mycalendar import MyCalendar
+from datetime import datetime
+from datetime import timedelta
+
 import db
 from models import User, Task
 import hashlib
@@ -33,12 +37,13 @@ def admin(request: Request, credentials: HTTPBasicCredentials = Depends(security
     #Basic認証で受け取った情報
     username = credentials.username
     password = hashlib.md5(credentials.password.encode()).hexdigest()
+
+    today = datetime.now()
+    next_w = today + timedelta(days=7)
     #DBからユーザー名が一致するデータを取得
     user = db.session.query(User).filter(User.username == username).first()
-    task = db.session.query(Task).filter(Task.user_id == user.id).all() if user is not None else []
     #データを取得後はセッションをクローズする
     db.session.close()
-
     #該当ユーザーがいない
     if user is None or user.password != password:
         error = 'ユーザー名かパスワードが間違っています'
@@ -47,11 +52,26 @@ def admin(request: Request, credentials: HTTPBasicCredentials = Depends(security
             detail = error,
             headers={"WWW-Authenticate": "Basic"},
         )
+    #task
+    task = db.session.query(Task).filter(Task.user_id == user.id).all()
+    db.session.close()
+
+    cal = MyCalendar(username,
+        {t.deadline.strftime('%Y%m%d'): t.done for t in task})
+
+
+    cal = cal.formatyear(today.year, 4)
+
+    task = [t for t in task if today <= t.deadline <= next_w]
+    links = [t.deadline.strftime('/todo/'+username+'/%Y/%m/%d') for t in task]
+
     #問題ない場合管理者ページ
     return templates.TemplateResponse('admin.html',
         {'request':request,
         'user':user,
-        'task':task})
+        'task':task,
+        'links': links,
+        'calendar': cal})
 
 
 

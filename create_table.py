@@ -14,8 +14,8 @@ if __name__ == "__main__":
 
     task = Task(
         user_id=admin.id,
-        content='猫田さんに会いに行く',
-        deadline=datetime(2020, 5, 27, 12, 00, 00),
+        content='猫田さんとおひる',
+        deadline=datetime(2020, 6, 5, 12, 00, 00),
     )
     print(task)
     db.session.add(task)
