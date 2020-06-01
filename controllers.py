@@ -42,7 +42,6 @@ def admin(request: Request, credentials: HTTPBasicCredentials = Depends(security
     next_w = today + timedelta(days=7)
     #DBからユーザー名が一致するデータを取得
     user = db.session.query(User).filter(User.username == username).first()
-    task = db.session.query(Task).filter(Task.user_id == user.id).all() if user is not None else []
     #データを取得後はセッションをクローズする
     db.session.close()
     #該当ユーザーがいない
@@ -53,6 +52,7 @@ def admin(request: Request, credentials: HTTPBasicCredentials = Depends(security
             detail = error,
             headers={"WWW-Authenticate": "Basic"},
         )
+    #task
     task = db.session.query(Task).filter(Task.user_id == user.id).all()
     db.session.close()
 

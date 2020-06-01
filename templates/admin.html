@@ -5,11 +5,11 @@
 <h2>Administrator page </h2>
 <hr>
 <p>Hi, {{ user['username'] }}.</p>
-
+<p><a href="/" class="btn btn-primary">戻る</a></p>
 <br>
-#取得したタスクをテーブルとして表示
+<h3> - 直近の予定 - </h3>
 <table class="table">
-  <thread class="table-dark">
+  <thead class="table-dark">
   <tr>
     <th>#</th>
     <th>内容</th>
@@ -17,12 +17,12 @@
     <th>掲載日</th>
     <th>終了</th>
   </tr>
-  </thread>
+  </thead>
   <tbody>
   {% for t in task %}
   <tr>
     <td>{{ t['id']}}</td>
-    <td>{{ t['content']}}</td>
+    <td><a href="{{links[loop.index-1]}}">{{t['content']}}</a></td>
     <td>{{ t['deadline']}}</td>
     <td>{{ t['date']}}</td>
     <td>{% if t['done'] %}
