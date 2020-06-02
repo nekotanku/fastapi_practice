@@ -4,6 +4,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 from starlette.status import HTTP_401_UNAUTHORIZED
+from starlette.responses import RedirectResponse
 
 from mycalendar import MyCalendar
 from datetime import datetime
@@ -12,6 +13,8 @@ from datetime import timedelta
 import db
 from models import User, Task
 import hashlib
+from auth import auth
+
 
 import re  # new
 pattern = re.compile(r'\w{4,20}')  # 任意の4~20の英数字を示す正規表現
@@ -35,7 +38,7 @@ def index(request: Request):
 
 def admin(request: Request, credentials: HTTPBasicCredentials = Depends(security)):
     #Basic認証で受け取った情報
-    username = credentials.username
+    username = auth(credentials)
     password = hashlib.md5(credentials.password.encode()).hexdigest()
 
     today = datetime.now()
@@ -118,3 +121,28 @@ async def register(request: Request):
         return templates.TemplateResponse('complete.html',
         {'request': request,
         'username': username})
+
+def detail(request: Request, username, year, month, day, credentials: HTTPBasicCredentials=Depends(security)):
+    #認証
+    username_tmp = auth(credentials)
+    #他のユーザーが訪問してきたら弾く
+    if username_tmp != username:
+        return RedirectResponse('/')
+    #ログインユーザを取得
+    user = db.session.query(User).filter(User.username == username).first()
+    #ログインユーザのタスクを取得
+    task = db.session.query(Task).filter(Task.user_id == user.id).all()
+    db.session.close()
+
+    #該当の日付と一致するするものだけのリストにする
+    #月日は０埋め
+    theday = '{}{}{}'.format(year, month.zfill(2), day.zfill(2))
+    task = [t for t in task if t.deadline.strftime('%Y%m%d')==theday]
+
+    return templates.TemplateResponse('detail.html',
+        {'request': request,
+         'username': username,
+         'task': task,
+         'year': year,
+         'month': month,
+         'day': day})
