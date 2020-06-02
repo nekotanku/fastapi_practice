@@ -146,3 +146,24 @@ def detail(request: Request, username, year, month, day, credentials: HTTPBasicC
          'year': year,
          'month': month,
          'day': day})
+
+
+async def done(request: Request, credentials: HTTPBasicCredentials = Depends(security)):
+    #認証
+    username = auth(credentials)
+    #ユーザー情報を取得
+    user = db.session.query(User).filter(User.username == username).first()
+    #ログインユーザーのタスクを取得
+    task = db.session.query(Task).filter(Task.user_id == user.id).all()
+
+    data = await request.form()
+    t_dones = data.getlist('done[]')
+
+    for t in task:
+        if str(t.id) in t_dones:
+            t.done = True
+
+    db.session.commit()
+    db.session.close()
+
+    return RedirectResponse('/admin')

@@ -15,7 +15,7 @@
 <br>
 <h3>予定一覧</h3>
 <p>予定を終了した場合チェックボックスにチェックをしてくだい</p>
-<from action="/done" method="post">
+<form action="/done" method="post">
   <table class="table">
     <thead class="table-dark">
     <tr>
@@ -42,7 +42,7 @@
   </table>
   <br>
   {% if task | length != 0 %}
-  <button type="submit" class="btn btn-primary">更新</button>
+  <button type="submit" class="btn btn-primary">更新する</button>
   {% else %}
   <button type="submit" class="btn btn-primary" disabled="disabled">更新する</button>
   {% endif %}
