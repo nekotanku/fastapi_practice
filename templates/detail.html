@@ -53,28 +53,30 @@
 <hr>
 <br>
 <h3>予定の追加</h3>
-<form action='/add' method="post">
-  <h5>内容</h5>
-  <p>
-    <input type="text" size="50" maxlength="200" name="content">
-  </p>
-  <br>
-  <h5>締め切り時間</h5>
-  <p>
-    {{year}}年{{month}}月{{day}}日
-    <select name="hour">
-      {% for h in range(25) %}
-      <option value="{{ h }}">{{ h }}</option>
-      {% endfor %}
-    </select>時
-    <select name="minute">
-      {% for m in range(61) %}
-      <option value="{{ m }}">{{ m }}</option>
-      {% endfor %}
-    </select>分
-  </p>
-  <br>
-  <button type="submit" class="btn btn-primary">予定を追加する</button>
+<form action="/add" method="post">
+    <h5>内容</h5>
+    <p><input type="text" size="50" maxlength="200" name="content"></p>
+    <br>
+    <h5>締め切り時間</h5>
+    <p>
+        <input name="year" value="{{ year }}">年
+        <input name="month" value="{{ month }}">月
+        <input name="day" value="{{ day }}">日
+    </p>
+    <p>
+        <select name="hour">
+            {% for h in range(25) %}
+            <option value="{{ h }}">{{ h }}</option>
+            {% endfor %}
+        </select>時
+        <select name="minute">
+            {% for m in range(61) %}
+            <option value="{{ m }}">{{ m }}</option>
+            {% endfor %}
+        </select>分
+    </p>
+    <br>
+    <button type="submit" class="btn btn-primary">予定を追加する</button>
 </form>
 
 {% endblock %}
