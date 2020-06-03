@@ -193,3 +193,22 @@ async def add(request: Request, credentials: HTTPBasicCredentials = Depends(secu
     db.session.close()
 
     return RedirectResponse('/admin')
+
+def delete(request: Request, t_id, credentials: HTTPBasicCredentials = Depends(security)):
+    #認証
+    username = auth(credentials)
+    #ログインユーザー情報取得
+    user = db.session.query(User).filter(User.username == username).first()
+
+    # 該当タスクを取得
+    task = db.session.query(Task).filter(Task.id == t_id).first()
+    # もしユーザIDが異なれば削除せずリダイレクト
+    if task.user_id != user.id:
+        return RedirectResponse('/admin')
+
+    # 削除してコミット
+    db.session.delete(task)
+    db.session.commit()
+    db.session.close()
+
+    return RedirectResponse('/admin')

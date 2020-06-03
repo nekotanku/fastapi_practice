@@ -22,6 +22,7 @@
       <th>内容</th>
       <th>締め切り</th>
       <th>終了</th>
+      <th></th>
     </tr>
     </thead>
     <tbody>
@@ -35,6 +36,9 @@
         {% else %}
         <input type="checkbox" name="done[]" value="{{ t.id }}"> &nbsp; <span class="text-danger">終了する</span>
         {% endif %}
+      </td>
+      <td>
+        <a href="/delete/{{ t.id }}" class="btn btn-danger btn-sm">削除</a>
       </td>
     </tr>
     {% endfor %}
@@ -57,7 +61,7 @@
     <h5>内容</h5>
     <p><input type="text" size="50" maxlength="200" name="content"></p>
     <br>
-    <h5>締め切り時間</h5>
+    <h5>締め切り日時</h5>
     <p>
         <input name="year" value="{{ year }}">年
         <input name="month" value="{{ month }}">月
