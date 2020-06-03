@@ -167,3 +167,29 @@ async def done(request: Request, credentials: HTTPBasicCredentials = Depends(sec
     db.session.close()
 
     return RedirectResponse('/admin')
+
+async def add(request: Request, credentials: HTTPBasicCredentials = Depends(security)):
+    # 認証
+    username = auth(credentials)
+
+    # ユーザ情報を取得
+    user = db.session.query(User).filter(User.username == username).first()
+
+    # フォームからデータを取得
+    data = await request.form()
+    print(data)
+    year = int(data['year'])
+    month = int(data['month'])
+    day = int(data['day'])
+    hour = int(data['hour'])
+    minute = int(data['minute'])
+
+    deadline = datetime(year=year, month=month, day=day, hour=hour, minute=minute)
+
+    # 新しくタスクを生成しコミット
+    task = Task(user.id, data['content'], deadline)
+    db.session.add(task)
+    db.session.commit()
+    db.session.close()
+
+    return RedirectResponse('/admin')
