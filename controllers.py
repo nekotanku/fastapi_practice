@@ -256,3 +256,24 @@ async def insert(request: Request, content: str = Form(...),
         'published': task.date.strftime('%Y-%m-%d %H:%M:%S'),
         'done': task.done,
     }
+
+async def erase(request: Request, t_id: str = Form(...), credentials: HTTPBasicCredentials = Depends(security)):
+    username = auth(credentials)
+
+    user = db.session.query(User).filter(User.username == username).first()
+
+    task = db.session.query(Task).filter(Task.id == t_id).first()
+
+    if task is None:
+        print("task_idが間違っています")
+        return db.session.close()
+
+    if task.user_id != user.id:
+        print("taskがありません")
+        return db.session.close()
+
+    db.session.delete(task)
+    db.session.commit()
+    db.session.close()
+
+    return "delete complete"
